@@ -1,3 +1,4 @@
+using System.Reflection;
 using Microsoft.EntityFrameworkCore;
 using RaceDay.Api.Data;
 
@@ -13,10 +14,14 @@ namespace RaceDay.Api
             builder.Services.AddDbContext<RaceDayDbContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-            // Controllers and Swagger
+            // Controllers and Swagger (with XML comments)
             builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen();
+            builder.Services.AddSwaggerGen(options =>
+            {
+                var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFile));
+            });
 
             // Session authentication
             builder.Services.AddDistributedMemoryCache();

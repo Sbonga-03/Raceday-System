@@ -15,6 +15,10 @@ public class AuthController : ControllerBase
     public AuthController(RaceDayDbContext db) => _db = db;
 
     /// <summary>Registers a new Organiser or Participant.</summary>
+    /// <remarks>Body: fullName, email, password (min 6 characters), roleId (1 = Organiser, 2 = Participant).</remarks>
+    /// <response code="201">User created.</response>
+    /// <response code="400">Invalid or missing fields, or a role that cannot be registered.</response>
+    /// <response code="409">Email already registered.</response>
     [HttpPost("register")]
     public async Task<IActionResult> Register(RegisterRequest request)
     {
@@ -43,10 +47,13 @@ public class AuthController : ControllerBase
             Email = user.Email,
             Role = role.RoleName
         };
-        return Created($"/api/users/me", response);
+        return Created("/api/users/me", response);
     }
 
     /// <summary>Logs in and stores the user ID and role in the session.</summary>
+    /// <remarks>Body: email, password.</remarks>
+    /// <response code="200">Logged in; returns the user details.</response>
+    /// <response code="401">Invalid email or password.</response>
     [HttpPost("login")]
     public async Task<IActionResult> Login(LoginRequest request)
     {
@@ -70,6 +77,7 @@ public class AuthController : ControllerBase
     }
 
     /// <summary>Logs out by clearing the session.</summary>
+    /// <response code="200">Session cleared.</response>
     [HttpPost("logout")]
     public IActionResult Logout()
     {

@@ -15,6 +15,8 @@ public class UsersController : ControllerBase
     public UsersController(RaceDayDbContext db) => _db = db;
 
     /// <summary>Returns the profile of the logged-in user.</summary>
+    /// <response code="200">The user's profile.</response>
+    /// <response code="401">Not logged in.</response>
     [HttpGet("me")]
     [RequireRole]
     public async Task<IActionResult> GetMe()
@@ -35,6 +37,11 @@ public class UsersController : ControllerBase
     }
 
     /// <summary>Updates the full name and email of the logged-in user.</summary>
+    /// <remarks>Body: fullName, email.</remarks>
+    /// <response code="200">Updated profile.</response>
+    /// <response code="400">Invalid or missing fields.</response>
+    /// <response code="401">Not logged in.</response>
+    /// <response code="409">Email belongs to another account.</response>
     [HttpPut("me")]
     [RequireRole]
     public async Task<IActionResult> UpdateMe(UpdateProfileRequest request)

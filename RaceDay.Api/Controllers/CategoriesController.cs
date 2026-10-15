@@ -17,6 +17,13 @@ public class CategoriesController : ControllerBase
     private int CurrentUserId => HttpContext.Session.GetInt32("UserId") ?? 0;
 
     /// <summary>Updates a category belonging to an event the Organiser owns.</summary>
+    /// <param name="id">The category ID.</param>
+    /// <remarks>Body: name, distance, fee.</remarks>
+    /// <response code="200">Updated category.</response>
+    /// <response code="400">Invalid or missing fields.</response>
+    /// <response code="401">Not logged in.</response>
+    /// <response code="403">Not an Organiser, or not the owner of the event.</response>
+    /// <response code="404">Category not found.</response>
     [HttpPut("{id}")]
     [RequireRole("Organiser")]
     public async Task<IActionResult> Update(int id, CategoryRequest request)
@@ -36,6 +43,12 @@ public class CategoriesController : ControllerBase
     }
 
     /// <summary>Removes a category (only if nobody has enrolled in it).</summary>
+    /// <param name="id">The category ID.</param>
+    /// <response code="204">Category deleted.</response>
+    /// <response code="401">Not logged in.</response>
+    /// <response code="403">Not an Organiser, or not the owner of the event.</response>
+    /// <response code="404">Category not found.</response>
+    /// <response code="409">The category has enrolments.</response>
     [HttpDelete("{id}")]
     [RequireRole("Organiser")]
     public async Task<IActionResult> Delete(int id)

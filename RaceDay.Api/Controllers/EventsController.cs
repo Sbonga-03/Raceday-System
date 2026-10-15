@@ -17,7 +17,10 @@ public class EventsController : ControllerBase
 
     private int CurrentUserId => HttpContext.Session.GetInt32("UserId") ?? 0;
 
-    /// <summary>Lists all events. Optional filters: date and location.</summary>
+    /// <summary>Lists all events, with optional filters.</summary>
+    /// <param name="date">Optional. Only events on this date.</param>
+    /// <param name="location">Optional. Only events whose location contains this text.</param>
+    /// <response code="200">Array of events.</response>
     [HttpGet]
     public async Task<IActionResult> GetAll([FromQuery] DateTime? date, [FromQuery] string? location)
     {
@@ -33,6 +36,9 @@ public class EventsController : ControllerBase
     }
 
     /// <summary>Returns one event including its categories.</summary>
+    /// <param name="id">The event ID.</param>
+    /// <response code="200">Event details with categories.</response>
+    /// <response code="404">Event not found.</response>
     [HttpGet("{id}")]
     public async Task<IActionResult> GetById(int id)
     {
@@ -53,6 +59,11 @@ public class EventsController : ControllerBase
     }
 
     /// <summary>Creates an event owned by the logged-in Organiser.</summary>
+    /// <remarks>Body: name, eventDate, location, description.</remarks>
+    /// <response code="201">Event created.</response>
+    /// <response code="400">Invalid or missing fields.</response>
+    /// <response code="401">Not logged in.</response>
+    /// <response code="403">Not an Organiser.</response>
     [HttpPost]
     [RequireRole("Organiser")]
     public async Task<IActionResult> Create(EventRequest request)
@@ -72,6 +83,13 @@ public class EventsController : ControllerBase
     }
 
     /// <summary>Updates an event the Organiser owns.</summary>
+    /// <param name="id">The event ID.</param>
+    /// <remarks>Body: name, eventDate, location, description.</remarks>
+    /// <response code="200">Updated event.</response>
+    /// <response code="400">Invalid or missing fields.</response>
+    /// <response code="401">Not logged in.</response>
+    /// <response code="403">Not an Organiser, or not the owner of this event.</response>
+    /// <response code="404">Event not found.</response>
     [HttpPut("{id}")]
     [RequireRole("Organiser")]
     public async Task<IActionResult> Update(int id, EventRequest request)
@@ -90,6 +108,12 @@ public class EventsController : ControllerBase
     }
 
     /// <summary>Deletes an event the Organiser owns (only if it has no categories).</summary>
+    /// <param name="id">The event ID.</param>
+    /// <response code="204">Event deleted.</response>
+    /// <response code="401">Not logged in.</response>
+    /// <response code="403">Not an Organiser, or not the owner of this event.</response>
+    /// <response code="404">Event not found.</response>
+    /// <response code="409">The event still has categories.</response>
     [HttpDelete("{id}")]
     [RequireRole("Organiser")]
     public async Task<IActionResult> Delete(int id)
@@ -107,6 +131,9 @@ public class EventsController : ControllerBase
     }
 
     /// <summary>Lists all categories for an event.</summary>
+    /// <param name="id">The event ID.</param>
+    /// <response code="200">Array of categories.</response>
+    /// <response code="404">Event not found.</response>
     [HttpGet("{id}/categories")]
     public async Task<IActionResult> GetCategories(int id)
     {
@@ -118,6 +145,13 @@ public class EventsController : ControllerBase
     }
 
     /// <summary>Adds a category to an event the Organiser owns.</summary>
+    /// <param name="id">The event ID.</param>
+    /// <remarks>Body: name, distance, fee.</remarks>
+    /// <response code="201">Category created.</response>
+    /// <response code="400">Invalid or missing fields.</response>
+    /// <response code="401">Not logged in.</response>
+    /// <response code="403">Not an Organiser, or not the owner of this event.</response>
+    /// <response code="404">Event not found.</response>
     [HttpPost("{id}/categories")]
     [RequireRole("Organiser")]
     public async Task<IActionResult> AddCategory(int id, CategoryRequest request)
