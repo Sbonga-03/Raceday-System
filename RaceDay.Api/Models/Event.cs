@@ -17,6 +17,12 @@ public class Event
     public string Location { get; set; } = string.Empty;
     [MaxLength(1000)]
     public string? Description { get; set; }
+    [Required, MaxLength(30)]
+    public string EventType { get; set; } = "Run";
+    [Column(TypeName = "decimal(6,2)")]
+    public decimal Distance { get; set; }
+    [MaxLength(500)]
+    public string? BannerUrl { get; set; }
 
     public User? Organiser { get; set; }
     public List<Category> Categories { get; set; } = new();

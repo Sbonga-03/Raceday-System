@@ -16,6 +16,8 @@ public class User
     [Required, MaxLength(255)]
     public string PasswordHash { get; set; } = string.Empty;
     public DateTime CreatedAt { get; set; } = DateTime.Now;
+    [MaxLength(500)]
+    public string? ProfilePictureUrl { get; set; }
 
     public Role? Role { get; set; }
 }
