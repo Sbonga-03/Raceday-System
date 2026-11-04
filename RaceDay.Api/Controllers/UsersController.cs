@@ -15,7 +15,7 @@ public class UsersController : ControllerBase
     public UsersController(RaceDayDbContext db) => _db = db;
 
     /// <summary>Returns the profile of the logged-in user.</summary>
-    /// <response code="200">The user's profile.</response>
+    /// <response code="200">The user's profile, including the profile picture URL.</response>
     /// <response code="401">Not logged in.</response>
     [HttpGet("me")]
     [RequireRole]
@@ -32,7 +32,8 @@ public class UsersController : ControllerBase
             UserId = user.UserID,
             FullName = user.FullName,
             Email = user.Email,
-            Role = user.Role!.RoleName
+            Role = user.Role!.RoleName,
+            ProfilePictureUrl = user.ProfilePictureUrl
         });
     }
 
@@ -65,7 +66,8 @@ public class UsersController : ControllerBase
             UserId = user.UserID,
             FullName = user.FullName,
             Email = user.Email,
-            Role = user.Role!.RoleName
+            Role = user.Role!.RoleName,
+            ProfilePictureUrl = user.ProfilePictureUrl
         });
     }
 }
