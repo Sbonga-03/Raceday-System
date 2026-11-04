@@ -16,6 +16,12 @@ public class EventRequest
 
     [MaxLength(1000)]
     public string? Description { get; set; }
+
+    [RegularExpression("^(Run|Walk|Cycle)$", ErrorMessage = "EventType must be Run, Walk or Cycle.")]
+    public string EventType { get; set; } = "Run";
+
+    [Range(0, 1000)]
+    public decimal Distance { get; set; }
 }
 
 public class CategoryRequest
@@ -56,6 +62,9 @@ public class EventResponse
     public DateTime EventDate { get; set; }
     public string Location { get; set; } = string.Empty;
     public string? Description { get; set; }
+    public string EventType { get; set; } = string.Empty;
+    public decimal Distance { get; set; }
+    public string? BannerUrl { get; set; }
 
     public static EventResponse From(Event e) => new()
     {
@@ -64,11 +73,27 @@ public class EventResponse
         Name = e.Name,
         EventDate = e.EventDate,
         Location = e.Location,
-        Description = e.Description
+        Description = e.Description,
+        EventType = e.EventType,
+        Distance = e.Distance,
+        BannerUrl = e.BannerUrl
     };
 }
 
 public class EventDetailResponse : EventResponse
 {
     public List<CategoryResponse> Categories { get; set; } = new();
+}
+
+
+public class OrganiserEventSummary
+{
+    public int EventId { get; set; }
+    public string Name { get; set; } = string.Empty;
+    public DateTime EventDate { get; set; }
+    public string Location { get; set; } = string.Empty;
+    public string? BannerUrl { get; set; }
+    public int CategoryCount { get; set; }
+    public int TotalEnrolments { get; set; }
+    public bool IsUpcoming { get; set; }
 }

@@ -6,9 +6,11 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
 		<NoWarn>$(NoWarn);1591</NoWarn>
+		<UserSecretsId>3521ead2-9095-4164-9ad2-128f3c745474</UserSecretsId>
 	</PropertyGroup>
 
 	<ItemGroup>
+		<PackageReference Include="Azure.Storage.Blobs" Version="12.30.1" />
 		<PackageReference Include="BCrypt.Net-Next" Version="4.2.0" />
 		<PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="10.0.13" />
 		<PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.11" />

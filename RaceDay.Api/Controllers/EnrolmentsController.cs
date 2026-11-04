@@ -69,6 +69,44 @@ public class EnrolmentsController : ControllerBase
         return Ok(enrolments.Select(EnrolmentResponse.From));
     }
 
+    /// <summary>Lists the logged-in Participant's race history with their position out of all finishers.</summary>
+    /// <response code="200">Array of results, newest event first.</response>
+    /// <response code="401">Not logged in.</response>
+    /// <response code="403">Not a Participant.</response>
+    [HttpGet("users/me/results")]
+    [RequireRole("Participant")]
+    public async Task<IActionResult> GetMyResults()
+    {
+        var userId = CurrentUserId;
+
+        var results = await _db.Results
+            .Include(r => r.Enrolment).ThenInclude(e => e!.Category).ThenInclude(c => c!.Event)
+            .Where(r => r.Enrolment!.ParticipantID == userId)
+            .ToListAsync();
+
+        var response = new List<MyResultResponse>();
+        foreach (var r in results)
+        {
+            var categoryId = r.Enrolment!.CategoryID;
+            var finishers = await _db.Results.CountAsync(x =>
+                x.Enrolment!.CategoryID == categoryId && x.Status == "Finished");
+
+            response.Add(new MyResultResponse
+            {
+                EventId = r.Enrolment.Category!.EventID,
+                EventName = r.Enrolment.Category.Event!.Name,
+                EventDate = r.Enrolment.Category.Event.EventDate,
+                CategoryName = r.Enrolment.Category.Name,
+                FinishTime = r.FinishTime,
+                Position = r.Position,
+                TotalFinishers = finishers,
+                Status = r.Status
+            });
+        }
+
+        return Ok(response.OrderByDescending(x => x.EventDate));
+    }
+
     /// <summary>Cancels the logged-in Participant's own enrolment.</summary>
     /// <param name="id">The enrolment ID.</param>
     /// <response code="204">Enrolment cancelled.</response>

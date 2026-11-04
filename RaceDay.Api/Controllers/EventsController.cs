@@ -35,6 +35,36 @@ public class EventsController : ControllerBase
         return Ok(events.Select(EventResponse.From));
     }
 
+    /// <summary>Organiser dashboard: lists the logged-in Organiser's events with enrolment totals.</summary>
+    /// <response code="200">Array of event summaries, ordered by date.</response>
+    /// <response code="401">Not logged in.</response>
+    /// <response code="403">Not an Organiser.</response>
+    [HttpGet("mine")]
+    [RequireRole("Organiser")]
+    public async Task<IActionResult> GetMine()
+    {
+        var userId = CurrentUserId;
+        var today = DateTime.Today;
+
+        var events = await _db.Events
+            .Where(e => e.OrganiserID == userId)
+            .OrderBy(e => e.EventDate)
+            .Select(e => new OrganiserEventSummary
+            {
+                EventId = e.EventID,
+                Name = e.Name,
+                EventDate = e.EventDate,
+                Location = e.Location,
+                BannerUrl = e.BannerUrl,
+                CategoryCount = e.Categories.Count,
+                TotalEnrolments = _db.EventEnrolments.Count(en => en.Category!.EventID == e.EventID),
+                IsUpcoming = e.EventDate >= today
+            })
+            .ToListAsync();
+
+        return Ok(events);
+    }
+
     /// <summary>Returns one event including its categories.</summary>
     /// <param name="id">The event ID.</param>
     /// <response code="200">Event details with categories.</response>
@@ -54,12 +84,15 @@ public class EventsController : ControllerBase
             EventDate = ev.EventDate,
             Location = ev.Location,
             Description = ev.Description,
+            EventType = ev.EventType,
+            Distance = ev.Distance,
+            BannerUrl = ev.BannerUrl,
             Categories = ev.Categories.Select(CategoryResponse.From).ToList()
         });
     }
 
     /// <summary>Creates an event owned by the logged-in Organiser.</summary>
-    /// <remarks>Body: name, eventDate, location, description.</remarks>
+    /// <remarks>Body: name, eventDate, location, description, eventType (Run, Walk or Cycle), distance.</remarks>
     /// <response code="201">Event created.</response>
     /// <response code="400">Invalid or missing fields.</response>
     /// <response code="401">Not logged in.</response>
@@ -74,7 +107,9 @@ public class EventsController : ControllerBase
             Name = request.Name.Trim(),
             EventDate = request.EventDate.Date,
             Location = request.Location.Trim(),
-            Description = request.Description?.Trim()
+            Description = request.Description?.Trim(),
+            EventType = request.EventType,
+            Distance = request.Distance
         };
         _db.Events.Add(ev);
         await _db.SaveChangesAsync();
@@ -84,7 +119,7 @@ public class EventsController : ControllerBase
 
     /// <summary>Updates an event the Organiser owns.</summary>
     /// <param name="id">The event ID.</param>
-    /// <remarks>Body: name, eventDate, location, description.</remarks>
+    /// <remarks>Body: name, eventDate, location, description, eventType (Run, Walk or Cycle), distance.</remarks>
     /// <response code="200">Updated event.</response>
     /// <response code="400">Invalid or missing fields.</response>
     /// <response code="401">Not logged in.</response>
@@ -102,6 +137,8 @@ public class EventsController : ControllerBase
         ev.EventDate = request.EventDate.Date;
         ev.Location = request.Location.Trim();
         ev.Description = request.Description?.Trim();
+        ev.EventType = request.EventType;
+        ev.Distance = request.Distance;
         await _db.SaveChangesAsync();
 
         return Ok(EventResponse.From(ev));
