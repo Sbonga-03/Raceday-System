@@ -1,6 +1,7 @@
 using System.Reflection;
 using Microsoft.EntityFrameworkCore;
 using RaceDay.Api.Data;
+using RaceDay.Api.Services;
 
 namespace RaceDay.Api
 {
@@ -13,6 +14,9 @@ namespace RaceDay.Api
             // Database
             builder.Services.AddDbContext<RaceDayDbContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+            // Image storage (Azure Blob Storage)
+            builder.Services.AddScoped<IImageStorageService, BlobImageStorageService>();
 
             // Controllers and Swagger (with XML comments)
             builder.Services.AddControllers();
