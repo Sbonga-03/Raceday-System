@@ -14,6 +14,20 @@ public class EventSummary
     public string? BannerUrl { get; set; }
 }
 
+public class CategoryInfo
+{
+    public int CategoryId { get; set; }
+    public int EventId { get; set; }
+    public string Name { get; set; } = string.Empty;
+    public decimal Distance { get; set; }
+    public decimal Fee { get; set; }
+}
+
+public class EventDetail : EventSummary
+{
+    public List<CategoryInfo> Categories { get; set; } = new();
+}
+
 public class EventsIndexViewModel
 {
     public List<EventSummary> Events { get; set; } = new();
