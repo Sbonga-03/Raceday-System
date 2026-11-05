@@ -62,4 +62,26 @@ public class ParticipantController : Controller
 
         return RedirectToAction(nameof(MyEvents));
     }
+
+    public async Task<IActionResult> MyResults()
+    {
+        if (!IsParticipant)
+            return RedirectToLogin("Please log in as a Participant to see your results.");
+
+        var result = await _api.GetAsync<List<MyResultInfo>>("api/users/me/results");
+
+        if (result.StatusCode == HttpStatusCode.Unauthorized)
+            return RedirectToLogin("Your session has expired. Please log in again.");
+
+        if (!result.Success)
+        {
+            ViewBag.Error = result.Error;
+            return View(new List<MyResultInfo>());
+        }
+
+        var results = (result.Data ?? new List<MyResultInfo>())
+            .OrderByDescending(r => r.EventDate)
+            .ToList();
+        return View(results);
+    }
 }
