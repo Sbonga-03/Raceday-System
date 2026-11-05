@@ -1,0 +1,120 @@
+﻿@model List<RaceDay.Web.Models.OrganiserEventInfo>
+@{
+    ViewData["Title"] = "Dashboard";
+    var upcoming = Model.Where(e => e.IsUpcoming).OrderBy(e => e.EventDate).ToList();
+    var totalEnrolments = Model.Sum(e => e.TotalEnrolments);
+    var nextEvent = upcoming.FirstOrDefault();
+}
+
+<div class="mb-4">
+    <h1 class="mb-1">Organiser dashboard</h1>
+    <p class="text-muted mb-0">A summary of the events you have created.</p>
+</div>
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success">@TempData["Success"]</div>
+}
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">@TempData["Error"]</div>
+}
+@if (ViewBag.Error != null)
+{
+    <div class="alert alert-danger">@ViewBag.Error</div>
+}
+
+<div class="row g-3 mb-4">
+    <div class="col-md-3 col-6">
+        <div class="card h-100">
+            <div class="card-body">
+                <div class="text-muted small text-uppercase">Total events</div>
+                <div class="display-6">@Model.Count</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 col-6">
+        <div class="card h-100">
+            <div class="card-body">
+                <div class="text-muted small text-uppercase">Upcoming</div>
+                <div class="display-6">@upcoming.Count</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 col-6">
+        <div class="card h-100">
+            <div class="card-body">
+                <div class="text-muted small text-uppercase">Total enrolments</div>
+                <div class="display-6">@totalEnrolments</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 col-6">
+        <div class="card h-100">
+            <div class="card-body">
+                <div class="text-muted small text-uppercase">Next event</div>
+                @if (nextEvent != null)
+                {
+                    <div class="fw-semibold">@nextEvent.Name</div>
+                    <div class="text-muted small">@nextEvent.EventDate.ToString("d MMM yyyy")</div>
+                }
+                else
+                {
+                    <div class="text-muted">None scheduled</div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<h2 class="h4 mb-3">Your events</h2>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info">You have not created any events yet.</div>
+}
+else
+{
+    <div class="card">
+        <div class="table-responsive">
+            <table class="table align-middle mb-0">
+                <thead>
+                    <tr>
+                        <th>Event</th>
+                        <th>Date</th>
+                        <th>Location</th>
+                        <th class="text-center">Categories</th>
+                        <th class="text-center">Enrolments</th>
+                        <th>Status</th>
+                        <th class="text-end"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var e in Model)
+                    {
+                        <tr>
+                            <td class="fw-semibold">@e.Name</td>
+                            <td>@e.EventDate.ToString("d MMM yyyy")</td>
+                            <td>@e.Location</td>
+                            <td class="text-center">@e.CategoryCount</td>
+                            <td class="text-center"><span class="badge bg-dark">@e.TotalEnrolments</span></td>
+                            <td>
+                                @if (e.IsUpcoming)
+                                {
+                                    <span class="status-badge status-confirmed">Upcoming</span>
+                                }
+                                else
+                                {
+                                    <span class="status-badge status-finished">Completed</span>
+                                }
+                            </td>
+                            <td class="text-end">
+                                <a href="/Events/Details/@e.EventId" class="btn btn-outline-primary btn-sm">View</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+}
