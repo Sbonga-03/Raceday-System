@@ -45,6 +45,7 @@ public class EnrolmentResponse
     public string CategoryName { get; set; } = string.Empty;
     public int EventId { get; set; }
     public string EventName { get; set; } = string.Empty;
+    public DateTime EventDate { get; set; }
     public DateTime EnrolmentDate { get; set; }
     public string Status { get; set; } = string.Empty;
     public bool HasResult { get; set; }
@@ -58,6 +59,7 @@ public class EnrolmentResponse
         CategoryName = e.Category?.Name ?? string.Empty,
         EventId = e.Category?.EventID ?? 0,
         EventName = e.Category?.Event?.Name ?? string.Empty,
+        EventDate = e.Category?.Event?.EventDate ?? default,
         EnrolmentDate = e.EnrolmentDate,
         Status = e.Status,
         HasResult = e.Result != null
