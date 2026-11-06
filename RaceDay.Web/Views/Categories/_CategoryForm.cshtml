@@ -1,0 +1,33 @@
+﻿@model RaceDay.Web.Models.CategoryFormViewModel
+
+<form asp-controller="Categories" asp-action="@(ViewData["FormAction"]?.ToString())" method="post">
+    <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+
+    <input type="hidden" asp-for="EventId" />
+    <input type="hidden" asp-for="CategoryId" />
+
+    <div class="row g-3 align-items-start">
+        <div class="col-md-4">
+            <label asp-for="Name" class="form-label"></label>
+            <input asp-for="Name" class="form-control" placeholder="e.g. 10km" />
+            <span asp-validation-for="Name" class="text-danger"></span>
+        </div>
+        <div class="col-md-3">
+            <label asp-for="Distance" class="form-label"></label>
+            <input asp-for="Distance" type="number" step="0.1" min="0.01"
+                   value="@(Model.Distance.HasValue ? Model.Distance.Value.ToString("0.##", System.Globalization.CultureInfo.InvariantCulture) : "")"
+                   class="form-control" />
+            <span asp-validation-for="Distance" class="text-danger"></span>
+        </div>
+        <div class="col-md-3">
+            <label asp-for="Fee" class="form-label"></label>
+            <input asp-for="Fee" type="number" step="0.01" min="0"
+                   value="@(Model.Fee.HasValue ? Model.Fee.Value.ToString("0.##", System.Globalization.CultureInfo.InvariantCulture) : "")"
+                   class="form-control" />
+            <span asp-validation-for="Fee" class="text-danger"></span>
+        </div>
+        <div class="col-md-2 d-flex align-items-end" style="padding-top:2rem;">
+            <button type="submit" class="btn btn-primary w-100">@(ViewData["Button"]?.ToString())</button>
+        </div>
+    </div>
+</form>
