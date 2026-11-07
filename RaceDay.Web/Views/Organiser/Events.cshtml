@@ -62,6 +62,8 @@ else
                             <td>@e.Location</td>
                             <td class="text-center"><span class="badge bg-dark">@e.TotalEnrolments</span></td>
                             <td class="text-end">
+                                <a href="/Roster/Index/@e.EventId" class="btn btn-outline-dark btn-sm">Enrolments</a>
+                                <a href="/Roster/Results/@e.EventId" class="btn btn-outline-dark btn-sm">Results</a>
                                 <a href="/Categories/Manage/@e.EventId" class="btn btn-outline-dark btn-sm">Categories</a>
                                 <a href="/Organiser/Edit/@e.EventId" class="btn btn-outline-primary btn-sm">Edit</a>
                                 <form asp-controller="Organiser" asp-action="Delete" method="post" class="d-inline"
