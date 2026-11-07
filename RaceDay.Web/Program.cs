@@ -18,10 +18,19 @@ builder.Services.AddSession(options =>
     options.Cookie.IsEssential = true;
 });
 
+// Local testing only: allows the self-signed certificate of the API running on this computer
+var allowUntrustedCertificate = builder.Configuration.GetValue<bool>("Api:AllowUntrustedCertificate");
+
 // The service that talks to the RaceDay API
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddHttpClient<ApiClient>()
-    .ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler { UseCookies = false });
+    .ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler
+    {
+        UseCookies = false,
+        ServerCertificateCustomValidationCallback = allowUntrustedCertificate
+            ? HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
+            : null
+    });
 
 var app = builder.Build();
 
