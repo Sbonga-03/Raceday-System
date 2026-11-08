@@ -18,11 +18,11 @@ jobs:
         with:
           dotnet-version: '10.0.x'
 
-      - name: Restore dependencies
-        run: dotnet restore "$(find . -name '*Tests.csproj' | head -n 1)"
+      - name: Build API
+        run: dotnet build "$(find . -name 'RaceDay.Api.csproj' | head -n 1)" --configuration Release
 
-      - name: Build
-        run: dotnet build "$(find . -name '*Tests.csproj' | head -n 1)" --no-restore
+      - name: Build MVC web app
+        run: dotnet build "$(find . -name 'RaceDay.Web.csproj' | head -n 1)" --configuration Release
 
       - name: Run unit tests
-        run: dotnet test "$(find . -name '*Tests.csproj' | head -n 1)" --no-build --verbosity normal
+        run: dotnet test "$(find . -name '*Tests.csproj' | head -n 1)" --configuration Release --verbosity normal
