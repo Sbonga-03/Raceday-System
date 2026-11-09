@@ -1,0 +1,75 @@
+﻿@model List<RaceDay.Web.Models.EnrolmentInfo>
+@{
+    ViewData["Title"] = "My events";
+}
+
+<div class="mb-4">
+    <h1 class="mb-1">My events</h1>
+    <p class="text-muted mb-0">Every race you have entered and where it stands.</p>
+</div>
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success">@TempData["Success"]</div>
+}
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">@TempData["Error"]</div>
+}
+@if (ViewBag.Error != null)
+{
+    <div class="alert alert-danger">@ViewBag.Error</div>
+}
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info">
+        You have not entered any events yet. <a href="/">Browse upcoming events</a> to get started.
+    </div>
+}
+else
+{
+    <div class="card">
+        <div class="table-responsive">
+            <table class="table align-middle mb-0">
+                <thead>
+                    <tr>
+                        <th>Event</th>
+                        <th>Date</th>
+                        <th>Category</th>
+                        <th>Status</th>
+                        <th class="text-end"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var e in Model)
+                    {
+                        var upcoming = e.EventDate.Date >= DateTime.Today;
+                        <tr>
+                            <td><a href="/Events/Details/@e.EventId">@e.EventName</a></td>
+                            <td>@e.EventDate.ToString("d MMM yyyy")</td>
+                            <td>@e.CategoryName</td>
+                            <td>
+                                <span class="status-badge status-@e.Status.ToLower()">@e.Status</span>
+                                @if (e.HasResult)
+                                {
+                                    <span class="status-badge status-finished ms-1">Result recorded</span>
+                                }
+                            </td>
+                            <td class="text-end">
+                                @if (upcoming && !e.HasResult)
+                                {
+                                    <form asp-controller="Participant" asp-action="CancelEnrolment" method="post" class="d-inline"
+                                          onsubmit="return confirm('Cancel your entry to @e.EventName?');">
+                                        <input type="hidden" name="id" value="@e.EnrolmentId" />
+                                        <button type="submit" class="btn btn-outline-danger btn-sm">Cancel entry</button>
+                                    </form>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+}

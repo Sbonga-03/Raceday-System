@@ -1,0 +1,141 @@
+:root {
+    --rd-navy: #0b1f3a;
+    --rd-navy-light: #16335c;
+    --rd-orange: #ff5a1f;
+    --rd-orange-dark: #e04a12;
+    --rd-bg: #f4f6fa;
+    --rd-text: #1c2430;
+}
+
+html {
+    font-size: 15px;
+    position: relative;
+    min-height: 100%;
+}
+
+body {
+    font-family: 'Inter', 'Segoe UI', sans-serif;
+    background-color: var(--rd-bg);
+    color: var(--rd-text);
+    margin-bottom: 70px;
+}
+
+h1, h2, h3, h4, h5, .navbar-brand {
+    font-family: 'Barlow Condensed', 'Segoe UI', sans-serif;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+/* Navigation */
+.rd-navbar {
+    background: linear-gradient(90deg, var(--rd-navy), var(--rd-navy-light));
+    border-bottom: 4px solid var(--rd-orange);
+}
+
+    .rd-navbar .navbar-brand {
+        color: #fff;
+        font-size: 1.7rem;
+    }
+
+        .rd-navbar .navbar-brand span {
+            color: var(--rd-orange);
+        }
+
+    .rd-navbar .nav-link {
+        color: #dfe6f2;
+        font-weight: 500;
+    }
+
+        .rd-navbar .nav-link:hover,
+        .rd-navbar .nav-link:focus {
+            color: var(--rd-orange);
+        }
+
+.rd-role-badge {
+    background-color: var(--rd-orange);
+    color: #fff;
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+/* Buttons */
+.btn-primary {
+    background-color: var(--rd-orange);
+    border-color: var(--rd-orange);
+    font-weight: 600;
+}
+
+    .btn-primary:hover,
+    .btn-primary:focus,
+    .btn-primary:active {
+        background-color: var(--rd-orange-dark) !important;
+        border-color: var(--rd-orange-dark) !important;
+    }
+
+.btn-outline-primary {
+    color: var(--rd-orange);
+    border-color: var(--rd-orange);
+}
+
+    .btn-outline-primary:hover {
+        background-color: var(--rd-orange);
+        border-color: var(--rd-orange);
+        color: #fff;
+    }
+
+a {
+    color: var(--rd-orange-dark);
+}
+
+/* Cards and forms */
+.card {
+    border: 0;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(11, 31, 58, 0.08);
+}
+
+.form-control:focus,
+.form-select:focus {
+    border-color: var(--rd-orange);
+    box-shadow: 0 0 0 0.2rem rgba(255, 90, 31, 0.2);
+}
+
+/* Enrolment status colours */
+.status-badge {
+    padding: 0.35em 0.8em;
+    border-radius: 999px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #fff;
+}
+
+.status-confirmed {
+    background-color: #1f9d55;
+}
+
+.status-pending {
+    background-color: #f0a30a;
+    color: #1c2430;
+}
+
+.status-cancelled {
+    background-color: #c0392b;
+}
+
+.status-finished {
+    background-color: #2563eb;
+}
+
+/* Footer */
+.rd-footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    line-height: 60px;
+    background-color: var(--rd-navy);
+    color: #aeb9cc;
+    text-align: center;
+}

@@ -1,0 +1,83 @@
+﻿@model RaceDay.Web.Models.EventsIndexViewModel
+@{
+    ViewData["Title"] = "Upcoming events";
+}
+
+<div class="mb-4">
+    <h1 class="mb-1">Upcoming events</h1>
+    <p class="text-muted mb-0">Find your next race and enter in a few clicks.</p>
+</div>
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success">@TempData["Success"]</div>
+}
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">@TempData["Error"]</div>
+}
+
+<form method="get" class="card card-body mb-4">
+    <div class="row g-2 align-items-end">
+        <div class="col-md-5">
+            <label for="location" class="form-label">Location</label>
+            <input type="text" id="location" name="location" value="@Model.Location"
+                   class="form-control" placeholder="e.g. Pretoria" />
+        </div>
+        <div class="col-md-4">
+            <label for="date" class="form-label">Date</label>
+            <input type="date" id="date" name="date"
+                   value="@(Model.Date?.ToString("yyyy-MM-dd"))" class="form-control" />
+        </div>
+        <div class="col-md-3 d-flex gap-2">
+            <button type="submit" class="btn btn-primary flex-fill">Filter</button>
+            <a href="/" class="btn btn-outline-primary">Clear</a>
+        </div>
+    </div>
+</form>
+
+@if (Model.Error != null)
+{
+    <div class="alert alert-danger">@Model.Error</div>
+}
+else if (!Model.Events.Any())
+{
+    <div class="alert alert-info">No events match your search. Try a different location or date.</div>
+}
+else
+{
+    <div class="row g-4">
+        @foreach (var ev in Model.Events)
+        {
+            <div class="col-md-6 col-lg-4">
+                <div class="card h-100">
+                    @if (!string.IsNullOrEmpty(ev.BannerUrl))
+                    {
+                        <img src="@ev.BannerUrl" class="card-img-top" alt="@ev.Name banner"
+                             style="height:180px;object-fit:cover;border-radius:12px 12px 0 0;" />
+                    }
+                    else
+                    {
+                        <div class="d-flex align-items-center justify-content-center text-white"
+                             style="height:180px;border-radius:12px 12px 0 0;background:linear-gradient(135deg,#0b1f3a,#16335c);">
+                            <span class="h3 mb-0">Race<span style="color:#ff5a1f;">Day</span></span>
+                        </div>
+                    }
+                    <div class="card-body d-flex flex-column">
+                        <div class="mb-2">
+                            <span class="badge bg-dark">@ev.EventType</span>
+                            @if (ev.Distance > 0)
+                            {
+                                <span class="badge bg-secondary">@ev.Distance.ToString("0.##") km</span>
+                            }
+                        </div>
+                        <h5 class="card-title">@ev.Name</h5>
+                        <p class="card-text text-muted mb-1">@ev.EventDate.ToString("dddd, d MMMM yyyy")</p>
+                        <p class="card-text text-muted">@ev.Location</p>
+                        <a href="/Events/Details/@ev.EventId" class="btn btn-primary mt-auto">View details</a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}

@@ -1,0 +1,91 @@
+﻿@model List<RaceDay.Web.Models.MyResultInfo>
+@{
+    ViewData["Title"] = "My results";
+}
+
+@functions {
+    // 1 -> 1st, 2 -> 2nd, 3 -> 3rd, 11 -> 11th, 47 -> 47th
+    string Ordinal(int n)
+    {
+        if (n % 100 >= 11 && n % 100 <= 13) return n + "th";
+        return (n % 10) switch
+        {
+            1 => n + "st",
+            2 => n + "nd",
+            3 => n + "rd",
+            _ => n + "th"
+        };
+    }
+}
+
+<div class="mb-4">
+    <h1 class="mb-1">My results</h1>
+    <p class="text-muted mb-0">Your race history across every event you have completed.</p>
+</div>
+
+@if (ViewBag.Error != null)
+{
+    <div class="alert alert-danger">@ViewBag.Error</div>
+}
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info">
+        No results have been recorded for you yet. Results appear here after an organiser publishes them.
+        <a href="/Participant/MyEvents">View my events</a>
+    </div>
+}
+else
+{
+    <div class="card">
+        <div class="table-responsive">
+            <table class="table align-middle mb-0">
+                <thead>
+                    <tr>
+                        <th>Event</th>
+                        <th>Date</th>
+                        <th>Category</th>
+                        <th>Finish time</th>
+                        <th>Position</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var r in Model)
+                    {
+                        <tr>
+                            <td><a href="/Events/Details/@r.EventId">@r.EventName</a></td>
+                            <td>@r.EventDate.ToString("d MMM yyyy")</td>
+                            <td>@r.CategoryName</td>
+                            <td>
+                                @if (r.FinishTime.HasValue)
+                                {
+                                    @r.FinishTime.Value.ToString(@"hh\:mm\:ss")
+                                }
+                                else
+                                {
+                                    <span class="text-muted">&ndash;</span>
+                                }
+                            </td>
+                            <td>
+                                @if (r.Position.HasValue)
+                                {
+                                    <strong>@Ordinal(r.Position.Value)</strong>
+                                    @if (r.TotalFinishers > 0)
+                                    {
+                                        <span class="text-muted"> of @r.TotalFinishers</span>
+                                    }
+                                }
+                                else
+                                {
+                                    <span class="text-muted">&ndash;</span>
+                                }
+                            </td>
+                            <td><span class="status-badge status-@r.Status.ToLower()">@r.Status</span></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+}
